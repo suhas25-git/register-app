@@ -4,6 +4,9 @@ pipeline {
         jdk 'java17'
         maven 'maven3'
     }
+     enviornment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
     stages{
         stage("Cleanup Workspace"){
                 steps {
@@ -29,14 +32,27 @@ pipeline {
                  sh "mvn test"
            }
        }
-       //  stage("SonarQube Analysis"){
-       //     steps {
-	      //      script {
-		     //    withSonarQubeEnv(credentialsId: 'jenkin-sonarqube-tokan') { 
-       //                  sh "mvn sonar:sonar"
-		     //    }
-	      //      }	
-       //     }
-       // }
+          stage('SonarQube Analsyis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=register-app -Dsonar.projectKey=register-app \
+                            -Dsonar.java.binaries=. '''
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                script {
+                  waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-tokan' 
+                }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+               sh "mvn package"
+            }
+        }
 }
 }
