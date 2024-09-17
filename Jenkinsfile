@@ -35,7 +35,7 @@ pipeline {
        }
           stage('SonarQube Analsyis') {
             steps {
-                withSonarQubeEnv('sonar') {
+                withSonarQubeEnv('sonar-scanner') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=register-app -Dsonar.projectKey=register-app \
                             -Dsonar.java.binaries=. '''
                 }
