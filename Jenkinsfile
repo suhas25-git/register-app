@@ -12,6 +12,7 @@ pipeline {
             IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
             IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
             SCANNER_HOME= tool 'sonar-scanner'
+	    JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN") 
      }
     
     stages{
